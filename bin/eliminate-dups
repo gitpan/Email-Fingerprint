@@ -1,0 +1,136 @@
+#!/usr/bin/perl -w
+# qmail duplicate eliminator.
+
+use strict;
+use File::Basename;
+use Getopt::Long;
+
+use Email::Fingerprint;
+use Email::Fingerprint::Cache;
+
+umask oct(77);
+
+my $dump = 0;                       # Default value
+my $strict_checking = 0;            # Default value
+
+my $hashfile = get_options();
+
+my %hash;
+
+# Initialize the cache
+my $cache    = new Email::Fingerprint::Cache({
+    hash     => \%hash,
+    file     => $hashfile,
+});
+
+# Lock it
+if ( not $cache->lock( block => 1 ) ) {
+    warn "Couldn't lock $hashfile: $!\n";
+    exit 111;
+}
+
+# Open it
+if ( not $cache->open ) {
+    warn "Can't open $hashfile: $!\n";
+    $cache->unlock;
+    exit 111;
+}
+
+# Dump the contents, if requested
+if ($dump)
+{
+    # Dump the contents of the hashfile in a human readable format
+    $cache->dump;
+    $cache->close;
+    $cache->unlock;
+
+    exit 0;
+}
+
+my $checksum =  new Email::Fingerprint({
+    input           => \*STDIN,
+    checksum        => "Digest::MD5",
+    strict_checking => $strict_checking,
+});
+
+# Compute the checksum
+my $fingerprint = $checksum->checksum;
+
+# If there's a match, suppress it with exit code 99.
+if (defined $hash{$fingerprint})
+{
+    # Fingerprint matches. Tell qmail to stop current delivery.
+
+    $cache->close;
+    $cache->unlock;
+
+    exit 99;
+}
+
+# Record the fingerprint
+$hash{$fingerprint} = time;
+
+# Clean out the cache and proceed with delivery
+$cache->purge;
+$cache->close;
+$cache->unlock;
+
+
+sub die_usage
+{
+    my $progname = basename $0;
+
+    warn "usage:\t$progname [--strict|-s] [hashfile]\n"
+       . "\t$progname [--dump|-d] [hashfile]\n";
+    exit 111;
+}
+
+
+sub get_options
+{
+    my $help = 0;
+
+    die_usage() unless GetOptions(
+        "dump"   => \$dump,
+        "strict" => \$strict_checking,
+        "help"   => \$help,
+    );
+
+    die_usage() if $help;
+
+    return shift @ARGV;
+}
+
+=head1 NAME
+
+eliminate-dups
+
+=head1 DESCRIPTION  
+
+Reads an email message on standard input and calculates a fingerprint
+based on the mail headers. If the fingerprint already exists in the
+hashfile, then the message is a duplicate.  If the fingerprint does
+not exist, save the fingerprint in the hashfile and deliver the
+message.
+
+=head1 SETUP
+
+Create a ~/.qmail-maildir file
+
+   ./Maildir/
+
+Then add the following lines to your ~/.qmail file
+
+   | eliminate-dups hashfile
+   &user-maildir
+
+The forwarding to the user-maildir address ensures that if delivery
+to the Maildir is deferred, eliminate-dups will not be called a
+second time (which would result in a lost message).
+
+=head1 LICENSE
+
+Copyright (C) 2007 Len Budney
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.

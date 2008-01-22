@@ -1,0 +1,26 @@
+Revision history for Email-Fingerprint
+
+0.15    2008-01-21
+        Added script to package.
+0.14    2008-01-20
+        Added bunches of tests. All pass.
+0.13    2008-01-10
+        Changed Email::Fingerprint::Cache::NDBM to inside-out object.
+0.12    2007-11-10
+        Changed Email::Fingerprint::Cache to inside-out object. All tests pass.
+0.11    2007-11-05
+        Email::Fingerprint::Cache coverage: total. Devel::Cover chokes on eval.
+0.10    2007-11-04
+        Cleaned up purge() method to remove surprising side effect.
+0.09    2007-11-03
+        Added DESTROY method to protect cache data and warn sloppy coders.
+0.08    2007-11-02
+        Added tests for the fingerprint cache, fixed uncovered bugs.
+0.07    2007-10-02
+        Added more tests, found Perl bug, fixed "smart" read() method.
+0.06    2007-09-01
+        Added tests, including distribution and kwalitee.
+0.05    2007-02-19
+        Changed structure of Email::Fingerprint to use Class::Std.
+0.01    2007-01-01
+        First version, released on an unsuspecting world.
