@@ -7,6 +7,7 @@ WriteMakefile(
     AUTHOR              => 'Len Budney <lbudney@pobox.com>',
     VERSION_FROM        => 'lib/Email/Fingerprint.pm',
     ABSTRACT_FROM       => 'lib/Email/Fingerprint.pm',
+    LICENSE             => 'perl',
     PL_FILES            => {},
     INST_SCRIPT         => 'blib/bin',
     INSTALLSCRIPT       => '/usr/local/bin',

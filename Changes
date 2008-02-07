@@ -1,5 +1,7 @@
 Revision history for Email-Fingerprint
 
+0.16    2008-02-06
+        Upgraded ExtUtils::MakeMaker and regenerated META.yml.
 0.15    2008-01-21
         Added script to package.
 0.14    2008-01-20

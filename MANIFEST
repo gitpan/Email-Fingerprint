@@ -1,6 +1,6 @@
 Changes
 MANIFEST
-META.yml # Will be created by "make dist"
+META.yml
 Makefile.PL
 README
 META.yml
