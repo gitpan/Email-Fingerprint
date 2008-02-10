@@ -18,7 +18,7 @@ package Sentinel;
 
 sub DESTROY {
     my $self = shift;
-    unlink $self->{file};
+    unlink $_ for glob $self->{file} . "*";
 }
 
 # Back to our show...
@@ -45,21 +45,16 @@ lives_ok {
     });
 } "Constructor lives";
 
-# Look up the filename
-can_ok $cache, "get_file";
-ok $cache->get_file, "Cache has a file name";
-
 # Look up the TTL
 can_ok $cache, "get_ttl";
 is $cache->get_ttl, 60, "Cache has correct TTL";
 
 # Arrange for cleanup on exit
-my $sentinel = bless { file => $cache->get_file }, "Sentinel";
+my $sentinel = bless { file => $file }, "Sentinel";
 
 # Create the file
 can_ok $cache, "open";
 ok $cache->open, "Opened cache file successfully";
-ok -f $cache->get_file, "Cache file exists";
 
 # Add a bunch of "fingerprints", all older than one minute
 for my $n ( 1..100 ) {
@@ -98,7 +93,6 @@ warning_is { undef $cache } undef, "Destroyed without warnings";
 
     # Simple constructor call, all defaults
     lives_ok { $cache = new Email::Fingerprint::Cache } "Default constructor";
-    is $cache->get_file, ".maildups.db", "Default cache file";
 
     # Construction with an invalid backend should fail
     throws_ok { $cache = new Email::Fingerprint::Cache({ backend => 'BOGUS' }) }
@@ -113,13 +107,11 @@ warning_is { undef $cache } undef, "Destroyed without warnings";
 
 # Default backend, default filename
 $cache = new Email::Fingerprint::Cache({ backend => undef });
-is $cache->get_file, ".maildups.db", "Default backend, default cache file";
 
 # Backend with file() method
 {
     package Backend1;
     sub new { my $scalar; return bless \$scalar, "Backend1"; }
-    sub get_file { return "foo" }
     sub unlock {}
     sub is_open {0}
 
@@ -127,7 +119,6 @@ is $cache->get_file, ".maildups.db", "Default backend, default cache file";
     $cache = new Email::Fingerprint::Cache({ backend => "Backend1" });
 
     ok $cache, "Cache using locally defined class as backend";
-    is $cache->get_file, "foo", "Backend with file() method";
 }
 
 # Backend with AUTOLOAD method supplying a filename
@@ -142,58 +133,6 @@ is $cache->get_file, ".maildups.db", "Default backend, default cache file";
     $cache = new Email::Fingerprint::Cache({ backend => "Backend2" });
 
     ok $cache, "Another cache using locally defined class as backend";
-    is $cache->get_file, "foo", "Backend with AUTOLOAD() method";
-}
-
-# Backend is a HASH, but doesn't have a "file" key
-{
-    package Backend5;
-    sub new  { my $self = { foo => "bar" }; return bless $self, "Backend5"; }
-    sub unlock {}
-    sub is_open {0}
-
-    package main;
-    $cache = new Email::Fingerprint::Cache({ backend => "Backend5" });
-
-    ok $cache, "Cache using blessed hashref as backend, but missing data";
-    throws_ok { $cache->get_file } qr{file information}, "get_file() dies";
-}
-
-# Backend is NOT a hash.
-{
-    package Backend6;
-    sub new  { my $self = []; return bless $self, "Backend6"; }
-    sub unlock {}
-    sub is_open {0}
-
-    package main;
-    $cache = new Email::Fingerprint::Cache({ backend => "Backend6" });
-
-    ok $cache, "Cache using blessed arrayref as backend";
-    throws_ok { $cache->get_file } qr{file information}, "get_file() dies";
-}
-
-# Backend has AUTOLOAD, but AUTOLOAD croaks. Simulates generic failure
-# mode in the backend.
-{
-    package Backend7;
-    use vars qw($AUTOLOAD);
-    my $die = 1;
-    sub new      { return bless {}, "Backend7"; }
-    sub is_open  {0}
-    sub unlock   {}
-    sub AUTOLOAD {
-        my $sub = $AUTOLOAD; $sub =~ s/.*:://; die if $sub eq 'get_file'; 
-    }
-
-    package main;
-    $cache = new Email::Fingerprint::Cache({
-        backend => "Backend7",
-        file    => undef,
-    });
-
-    ok $cache, "Backend with drastic failure mode";
-    dies_ok { $cache->get_file } "get_file() dies";
 }
 
 # Constructor returns undef
@@ -357,14 +296,26 @@ warning_is { undef $cache } undef, "Destroyed without warnings";
 ############################################################################
 
 $file = 't/data/cache';
+my %hash;
+our $data;
+
+# Read the data, stored in Perl format: loads hashref $data
+require "$file.pl";
 
 $cache = new Email::Fingerprint::Cache({
     file => $file,
-    hash => {},
+    hash => \%hash,
 });
 
 # Open the cache file
 ok $cache->open, "Opened cache file successfully";
+
+# Add our data to the hash
+$hash{$_} = $data->{$_} for keys %$data;
+
+# Close and reopen
+ok $cache->close, "Closed cache";
+ok $cache->open, "Cache reopened";
 
 my $output;
 
@@ -395,20 +346,15 @@ $cache = new Email::Fingerprint::Cache({
     hash => {},
 });
 
-my $filename = $cache->get_file;
-
 # Nothing should happen, either, if the file is locked
 $cache->lock;
 is $cache->set_file('foo'), undef, "Cache is locked";
-is $cache->get_file, $filename, "File name is unchanged";
 $cache->unlock;
 
 # Nothing should happen, either, if the file is locked
 $cache->open;
 is $cache->set_file('foo'), undef, "Cache is open";
-is $cache->get_file, $filename, "File name is unchanged";
 $cache->close;
 
 # Finally, the file is closed and unlocked, so it should work
 ok $cache->set_file('foo'), "Changing the file name";
-ok $cache->get_file ne $filename, "Filename has changed";

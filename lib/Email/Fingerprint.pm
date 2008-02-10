@@ -17,11 +17,11 @@ Email::Fingerprint - Calculate a digest for recognizing duplicate emails
 
 =head1 VERSION
 
-Version 0.16
+Version 0.18
 
 =cut
 
-our $VERSION = '0.16';
+our $VERSION = '0.18';
 
 =head1 SYNOPSIS
 

@@ -1,5 +1,9 @@
 Revision history for Email-Fingerprint
 
+0.17    2008-02-10
+        Changed test data to perl storage for platform independence.
+0.17    2008-02-09
+        Fixed backend to operate properly in NDBM and DBM-compatibility modes.
 0.16    2008-02-06
         Upgraded ExtUtils::MakeMaker and regenerated META.yml.
 0.15    2008-01-21

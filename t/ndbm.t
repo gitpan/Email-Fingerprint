@@ -19,12 +19,9 @@ lives_ok {
     });
 } "Constrution without filename";
 
-ok $cache->get_file, "Default filename used";
-
 # Undefine the filename and verify that methods do nothing
 $cache->set_file(undef);
 
-is $cache->get_file, undef, "Filename now undefined";
 is $cache->open, undef, "Can't open undefined file";
 is $cache->close, undef, "Can't close file that isn't open";
 
@@ -43,10 +40,9 @@ ok $cache->unlock, "Unlocked cache";
 open NULL, ">", "t/data/out.tmp";
 local(*STDERR) = *NULL;
 
-ok chmod( 0, $cache->get_file ), "Turned off file permissions";
+chmod(0, $_) for glob "$file*";
 is $cache->open, undef, "Can't open file";
-is $cache->lock, undef, "Can't lock file, either";
 
 unlink "t/data/out.tmp";
-unlink $cache->get_file;
+unlink $_ for glob "$file*";
 }

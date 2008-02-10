@@ -137,7 +137,7 @@ sub BUILD {
 =head2 set_file
 
   $file = $cache->set_file( 'somefile' ) or die "Failed to set filename";
-  # now $file eq $cache->get_file, NOT 'somefile'
+  # now $file eq 'somefile.db' or 'somefile.dir', etc., NOT 'somefile'
 
 Sets the file to be used for the cache. Returns the actual filename
 on success; false on failure.
@@ -159,35 +159,7 @@ sub set_file {
     # OK, there's no harm in changing the file attribute
     $self->get_backend->set_file($file);
 
-    return $self->get_file;
-}
-
-=head2 get_file
-
-  my $cache = new Email::Fingerprint::Cache(
-    file    => "somefile",
-    backend => "NDBM",
-  );
-
-  print $cache->get_file, "\n"; # Prints "somefile.db"
-
-Returns the name of the cache file. This may not be the same as the
-name given to C<new>, because the backend may add an extension or
-otherwise modify the name.
-
-=cut
-
-sub get_file {
-    my $self    = shift;
-    my $backend = $self->get_backend;
-
-    croak "Cache backend is not an object"
-        unless blessed $backend;
-
-    croak "Cache backend can't provide file information"
-        unless $backend->can('get_file') or $backend->can('AUTOLOAD');
-
-    return $backend->get_file;
+    1; 
 }
 
 =head2 get_backend

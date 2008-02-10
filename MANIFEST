@@ -3,7 +3,6 @@ MANIFEST
 META.yml
 Makefile.PL
 README
-META.yml
 lib/Email/Fingerprint/Cache/NDBM.pm
 lib/Email/Fingerprint/Cache.pm
 lib/Email/Fingerprint.pm
@@ -21,7 +20,7 @@ t/data/3.txt
 t/data/4.txt
 t/data/5.txt
 t/data/6.txt
-t/data/cache.db
+t/data/cache.pl
 t/data/cache.txt
 t/distribution.t
 t/initializers.t

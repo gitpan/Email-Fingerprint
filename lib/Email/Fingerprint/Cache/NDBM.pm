@@ -62,20 +62,6 @@ sub BUILD {
     my ( $self, $ident, $args ) = @_;
 }
 
-=head2 get_file
-
-Returns the associated filename. It's the filename we were given, plus
-the extension used by NDBM.
-
-=cut
-
-sub get_file {
-    my $self = shift;
-
-    return unless defined $file{ ident $self };
-    return $file{ ident $self } . ".db";
-}
-
 =head2 open
 
     $cache->open or die;
@@ -156,9 +142,11 @@ Lock the DB file. Returns false on failure, true on success.
 sub lock {
     my $self = shift;
     my %opts = @_;
-    my $file = $self->get_file;                 # Must use method!
 
     return 1 if exists $lock{ ident $self };    # Success if already locked
+
+    return unless exists $file{ ident $self };  # Can't lock nothing!
+    my $file = $file{ ident $self };
 
     # Flags for the correct locking mode
     my $flags  = LOCK_EX;
@@ -167,7 +155,7 @@ sub lock {
     my $FH = new FileHandle;
 
     # Open a file handle
-    $FH->open(">> $file") or return;
+    $FH->open(">> $file.lock") or return;
     flock($FH, $flags) or return;
 
     # Remember the lock
@@ -190,6 +178,8 @@ sub unlock {
 
     flock($FH, LOCK_UN) or return;
     $FH->close or return;
+
+    unlink $file{ ident $self } . ".lock" or return;
 
     1;
 }
