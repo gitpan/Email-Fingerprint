@@ -1,6 +1,8 @@
 Revision history for Email-Fingerprint
 
-0.17    2008-02-10
+0.19    2008-02-14
+        Re-packaged: last CPAN upload had a mysterious problem unpacking.
+0.18    2008-02-10
         Changed test data to perl storage for platform independence.
 0.17    2008-02-09
         Fixed backend to operate properly in NDBM and DBM-compatibility modes.

@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Email-Fingerprint
-version:             0.18
+version:             0.19
 abstract:            Calculate a digest for recognizing duplicate emails
 license:             perl
 author:              
