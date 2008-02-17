@@ -1,5 +1,7 @@
 Revision history for Email-Fingerprint
 
+0.20    2008-02-15
+        Added ExtUtils::MakeMaker to build_requires.
 0.19    2008-02-14
         Re-packaged: last CPAN upload had a mysterious problem unpacking.
 0.18    2008-02-10

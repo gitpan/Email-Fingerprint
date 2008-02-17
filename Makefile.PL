@@ -12,6 +12,7 @@ WriteMakefile(
     INST_SCRIPT         => 'blib/bin',
     INSTALLSCRIPT       => '/usr/local/bin',
     EXE_FILES           => [ 'bin/eliminate-dups' ],
+    NO_META             => 1,
     MAN1PODS            => {
          'bin/eliminate-dups' => "\$(INST_MAN1DIR)/eliminate-dups.1",
     },
