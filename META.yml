@@ -19,14 +19,14 @@ requires:
   File::Slurp:                  0
   List::MoreUtils:              0
 build_requires:
-  ExtUtils::MakeMaker           >= 6.31
-  Test::More                    0
-  Test::Exception               0
-  Test::Warn                    0
-  Test::Stdout                  0
-  File::Spec                    0
-  File::Slurp                   0
-  English                       0
+  ExtUtils::MakeMaker:          '>= 6.31'
+  Test::More:                   0
+  Test::Exception:              0
+  Test::Warn:                   0
+  Test::Stdout:                 0
+  File::Spec:                   0
+  File::Slurp:                  0
+  English:                      0
 distribution_type: module
 license: perl
 generated_by: Hand
