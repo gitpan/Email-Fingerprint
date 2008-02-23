@@ -1,5 +1,5 @@
 name:         Email-Fingerprint
-version:      0.20
+version:      0.24
 author:
   - Len Budney <lbudney@pobox.com>
 meta-spec:
@@ -8,25 +8,33 @@ meta-spec:
 installdirs:  site
 requires:
   Carp:                         0
-  Test::More:                   0
+  Class::Std:                   0
+  English:                      0
+  ExtUtils::MakeMaker:          '>= 6.31'
   Fcntl:                        0
+  File::Slurp:                  0
+  File::Spec:                   0
   FileHandle:                   0
+  List::MoreUtils:              0
   Mail::Header:                 0
   NDBM_File:                    0
-  Class::Std:                   0
   Scalar::Util:                 0
-  overload:                     0
-  File::Slurp:                  0
-  List::MoreUtils:              0
-build_requires:
-  ExtUtils::MakeMaker:          '>= 6.31'
-  Test::More:                   0
+  Test::Differences:            0
   Test::Exception:              0
+  Test::More:                   0
   Test::Warn:                   0
-  Test::Stdout:                 0
-  File::Spec:                   0
-  File::Slurp:                  0
+  overload:                     0
+build_requires:
   English:                      0
+  ExtUtils::MakeMaker:          '>= 6.31'
+  File::Slurp:                  0
+  File::Spec:                   0
+  Test::Differences:            0
+  Test::Exception:              0
+  Test::More:                   0
+  Test::Stdout:                 0
+  Test::Warn:                   0
+  lib:                          0
 distribution_type: module
 license: perl
 generated_by: Hand

@@ -1,5 +1,11 @@
 Revision history for Email-Fingerprint
 
+0.24    2008-02-22
+        Changed dump() to use GMT, and added example script.
+0.23    2008-02-21
+        Changed cache test to use Test::Differences. TNX Michael Schwern.
+0.22    2008-02-20
+        Removed rudeness from Makefile.PL and fixed up prereqs for cpantesters.
 0.21    2008-02-17
         Fixed parse errors in META.yml.
 0.20    2008-02-15

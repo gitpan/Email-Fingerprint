@@ -199,7 +199,7 @@ sub dump {
     for my $key ( sort { $hash->{$a} <=> $hash->{$b} } keys %$hash )
     {
         my $value = $hash->{$key};
-        print "$value\t", scalar localtime $value, "\t$key\n";
+        print "$value\t", scalar gmtime $value, "\t$key\n";
     }
 }
 

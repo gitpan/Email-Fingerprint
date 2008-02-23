@@ -3,6 +3,7 @@ MANIFEST
 META.yml
 Makefile.PL
 README
+examples/fpdump
 lib/Email/Fingerprint/Cache/NDBM.pm
 lib/Email/Fingerprint/Cache.pm
 lib/Email/Fingerprint.pm

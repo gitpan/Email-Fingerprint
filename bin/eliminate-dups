@@ -130,7 +130,7 @@ second time (which would result in a lost message).
 
 =head1 LICENSE
 
-Copyright (C) 2007 Len Budney
+Copyright (C) 2007-2008 Len Budney
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
