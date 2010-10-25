@@ -1,3 +1,5 @@
+require 5.006;
+
 use strict;
 use warnings;
 use ExtUtils::MakeMaker;
@@ -27,6 +29,7 @@ WriteMakefile(
         'Test::More'        => 0,
         'Test::Warn'        => 0,
         'overload'          => 0,
+        'version'           => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Email-Fingerprint-*' },

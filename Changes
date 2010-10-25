@@ -1,5 +1,7 @@
 Revision history for Email-Fingerprint
 
+0.25    2008-02-23
+        Uncovered dependency on perl version: at least 5.006.
 0.24    2008-02-22
         Changed dump() to use GMT, and added example script.
 0.23    2008-02-21

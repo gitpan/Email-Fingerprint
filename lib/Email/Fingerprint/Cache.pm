@@ -288,6 +288,8 @@ sub purge {
         my $timestamp = $hash->{$key} || 0; # Also clobbers bad data like undef
         delete $hash->{$key} if ($now - $timestamp) > $ttl;
     }
+
+    1;
 }
 
 =head2 DESTROY
@@ -339,6 +341,11 @@ Len Budney, C<< <lbudney at pobox.com> >>
 
 =head1 BUGS
 
+The C<dump()> method assumes that Perl's C<time()> function returns
+seconds since the UNIX epoch, 00:00:00 UTC, January 1, 1970. The
+module will work on architectures with non-standard epochs, but the
+automated tests will fail.
+
 Please report any bugs or feature requests to
 C<bug-email-fingerprint at rt.cpan.org>, or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Email-Fingerprint>.
@@ -381,7 +388,7 @@ L<http://www.qmail.org/>.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2006 Len Budney, all rights reserved.
+Copyright 2006-2008 Len Budney, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

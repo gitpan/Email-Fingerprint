@@ -359,3 +359,6 @@ $cache->close;
 
 # Finally, the file is closed and unlocked, so it should work
 ok $cache->set_file('foo'), "Changing the file name";
+
+# Clean up
+unlink "t/data/cache.db";

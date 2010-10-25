@@ -7,6 +7,15 @@ can use this module to detect duplicate email messages, even if the
 messages differ in some headers--for example, if they were relayed
 through different SMTP servers or sent at different times.
 
+REQUIREMENTS
+
+Installation requires Perl version 5.006 or greater: version 5.005005
+has a bug which prevents it from parsing the Makefile.PL correctly.
+
+The architecture must support the UNIX epoch, 00:00:00 GMT, January
+1, 1970.  If Perl's time() function uses a non-standard epoch, some
+tests will fail.  The module should still work fine, however.
+
 INSTALLATION
 
 To install this module, run the following commands:
@@ -44,7 +53,7 @@ available at <http://www.qmail.org/>.
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2007 Len Budney
+Copyright (C) 2007-2008 Len Budney
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

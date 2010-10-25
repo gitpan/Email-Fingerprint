@@ -145,7 +145,7 @@ sub lock {
 
     return 1 if exists $lock{ ident $self };    # Success if already locked
 
-    return unless exists $file{ ident $self };  # Can't lock nothing!
+    return unless defined $file{ ident $self }; # Can't lock nothing!
     my $file = $file{ ident $self };
 
     # Flags for the correct locking mode
@@ -155,7 +155,7 @@ sub lock {
     my $FH = new FileHandle;
 
     # Open a file handle
-    $FH->open(">> $file.lock") or return;
+    $FH->open("$file.db", ">>") or return;
     flock($FH, $flags) or return;
 
     # Remember the lock
@@ -178,8 +178,6 @@ sub unlock {
 
     flock($FH, LOCK_UN) or return;
     $FH->close or return;
-
-    unlink $file{ ident $self } . ".lock" or return;
 
     1;
 }
