@@ -1,5 +1,11 @@
 Revision history for Email-Fingerprint
 
+0.28	2010-10-26
+	Minor cleanup and updates to changelog.
+0.27	2010-10-25
+	Fixed tests that broke because Test::Trap doesn't work correctly.
+0.26	2010-10-24
+	Moved script functionality into a separate module for testing.
 0.25    2008-02-23
         Uncovered dependency on perl version: at least 5.006.
 0.24    2008-02-22
