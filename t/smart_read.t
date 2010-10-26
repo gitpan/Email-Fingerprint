@@ -74,7 +74,7 @@ dies_ok { $fp->read( $object ) } "Can't read impotent objects";
 # A simple object with iteration
 SKIP: {
 
-    eval { use FileHandle };
+    eval "use FileHandle";
     skip "Skipping: FileHandle module not installed" if $@;
 
     my $fh = new FileHandle;

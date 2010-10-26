@@ -26,6 +26,7 @@ t/data/cache.pl
 t/data/cache.txt
 t/distribution.t
 t/eliminate_dups.t
+t/eliminate_dups.pl
 t/initializers.t
 t/kwalitee.t
 t/ndbm.t

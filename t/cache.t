@@ -25,7 +25,7 @@ sub DESTROY {
 # Back to our show...
 package main;
 
-eval { use Email::Fingerprint::Cache };
+eval "use Email::Fingerprint::Cache";
 plan ( skip_all => "Failed to load Email::Fingerprint::Cache" ) if $@;
 
 ############################################################################
