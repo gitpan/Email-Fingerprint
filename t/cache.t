@@ -161,25 +161,38 @@ undef $cache;
 ############################################################################
 
 my $cache1 = new Email::Fingerprint::Cache({ file => $file });
-ok $cache1,       "Cache 1 for lock test";
+ok $cache1, "Cache 1 for lock test";
 
 my $cache2 = new Email::Fingerprint::Cache({ file => $file });
 ok $cache2, "Cache 2 for lock test";
 
-# Locking cache 1 should prevent locking cache2
+# Locking cache 1 should prevent locking cache2 in another process.
+# NOTE: It prevents locking cache2 in the *same* process on most UNIX
+# variants, except Solaris.
 ok $cache1->lock   ? 1 : 0, "Locked cache 1";
-ok $cache2->lock   ? 0 : 1, "Failed to lock cache 2";
+
+if (my $pid = fork()) {
+    waitpid $pid, 0;
+}
+else {
+    $cache2->lock && exit 0;
+    exit 1;
+}
+is $? >> 8, 1, "Failed to lock cache 2";
 ok $cache1->unlock ? 1 : 0, "Unlocked cache 1";
-ok $cache2->lock   ? 1 : 0, "Locked cache 2";
-ok $cache2->unlock ? 1 : 0, "Unlocked cache 2";
+
+if (my $pid = fork()) {
+    waitpid $pid, 0;
+}
+else {
+    $cache2->lock && $cache2->unlock && exit 1;
+    exit 0;
+}
+is $? >> 8, 1, "Locked and unlocked cache 2";
 
 # Destroy the caches
 undef $cache1;
 undef $cache2;
-
-# Note: we should also test blocking locks, but that requires a
-# fork(), so I've lazily put it off for a different test.
-
 
 ############################################################################
 # Test the ugly failsafe in the DESTROY() method
