@@ -5,10 +5,9 @@ use warnings;
 use strict;
 
 use Fcntl;
-use Fcntl ":flock";
-use FileHandle;
 use NDBM_File;
-use Carp qw(cluck);
+use Carp qw(carp);
+use LockFile::Simple;
 
 =head1 NAME
 
@@ -41,6 +40,7 @@ through Email::Fingerpint::Cache.
 my %file :ATTR( :init_arg<file>, :set<file> ) = ();
 my %hash :ATTR( :init_arg<hash> )             = ();
 my %lock :ATTR                                = ();
+my %mgr  :ATTR                                = ();
 
 =head1 FUNCTIONS
 
@@ -60,6 +60,13 @@ Internal helper method; never called directly by users.
 
 sub BUILD {
     my ( $self, $ident, $args ) = @_;
+
+    $mgr{$ident} = LockFile::Simple->make(
+        -nfs       => 1,
+        -warn      => 0,
+        -efunc     => undef,
+        -autoclean => 1,
+    );
 }
 
 =head2 open
@@ -82,7 +89,7 @@ sub open {
     tie %$hash, 'NDBM_File', $file, O_CREAT|O_RDWR, oct(600);
 
     if ( not $self->is_open ) {
-        cluck "Couldn't open $file";
+        carp "Couldn't open $file";
         return;
     }
 
@@ -148,18 +155,17 @@ sub lock {
     return unless defined $file{ ident $self }; # Can't lock nothing!
     my $file = $file{ ident $self };
 
-    # Flags for the correct locking mode
-    my $flags  = LOCK_EX;
-    $flags    |= LOCK_NB unless $opts{block};
+    my $mgr = $mgr{ ident $self };
 
-    my $FH = new FileHandle;
-
-    # Open a file handle
-    $FH->open("$file.db", ">>") or return;
-    flock($FH, $flags) or return;
+    # Perform the lock
+    my $lock
+        = $opts{block}
+        ? $mgr->lock($file)
+        : $mgr->trylock($file);
+    return unless $lock;
 
     # Remember the lock
-    $lock{ ident $self } = $FH;
+    $lock{ ident $self } = $lock;
 
     1;
 }
@@ -174,10 +180,9 @@ Unlocks the DB file. Returns false on failure, true on success.
 
 sub unlock {
     my $self = shift;
-    my $FH   = delete $lock{ ident $self } or return 1; # Success if no lock
+    my $lock = delete $lock{ ident $self } or return 1; # Success if no lock
 
-    flock($FH, LOCK_UN) or return;
-    $FH->close or return;
+    $lock->release();
 
     1;
 }
@@ -243,7 +248,7 @@ L<http://www.qmail.org/>.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2006 Len Budney, all rights reserved.
+Copyright 2006-2011 Len Budney, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

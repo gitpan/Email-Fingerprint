@@ -29,18 +29,18 @@ close FILE;
 # As a string
 $fp = new Email::Fingerprint($options);
 $fp->read($string);
-is( $fp->checksum, $checksum, "Scalar input" );
+ok $fp->checksum eq $checksum, "Scalar input";
 
 # As an array
 $fp = new Email::Fingerprint($options);
 $fp->read(\@array);
-is( $fp->checksum, $checksum, "Arrayref input" );
+ok $fp->checksum eq $checksum, "Arrayref input";
 
 # As a glob
 open FILE, "<", $file;
 $fp = new Email::Fingerprint($options);
 $fp->read(\*FILE);
-is( $fp->checksum, $checksum, "Glob input" );
+ok $fp->checksum eq $checksum, "Glob input";
 close FILE;
 
 # Any other reference, except an object, is forbidden.
@@ -68,7 +68,7 @@ dies_ok { $fp->read( $object ) } "Can't read impotent objects";
 
     $fp = new Email::Fingerprint($options);
     $fp->read($string);
-    is( $fp->checksum, $checksum, "Stringifiable object input" );
+    ok $fp->checksum eq $checksum, "Stringifiable object input";
 }
 
 # A simple object with iteration
@@ -82,5 +82,5 @@ SKIP: {
 
     $fp = new Email::Fingerprint($options);
     $fp->read($fh);
-    is( $fp->checksum, $checksum, "Iteratable object input" );
+    ok $fp->checksum eq $checksum, "Iteratable object input";
 }

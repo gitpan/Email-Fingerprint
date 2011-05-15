@@ -48,7 +48,7 @@ lives_ok {
 
 # Look up the TTL
 can_ok $cache, "get_ttl";
-is $cache->get_ttl, 60, "Cache has correct TTL";
+ok $cache->get_ttl == 60, "Cache has correct TTL";
 
 # Arrange for cleanup on exit
 my $sentinel = bless { file => $file }, "Sentinel";
@@ -64,14 +64,14 @@ for my $n ( 1..100 ) {
 }
 
 # Now confirm that they're there
-is scalar keys %fingerprints, 100, "Added fingerprints OK";
+ok scalar(keys %fingerprints) == 100, "Added fingerprints OK";
 
 # Double-check using the value returned by get_hash()
-is scalar keys %{ $cache->get_hash }, 100, "Double-checking fingerprint count";
+ok scalar(keys %{ $cache->get_hash }) == 100, "Double-checking fingerprint count";
 
 # ...and purge them.
 $cache->purge;
-is scalar keys %fingerprints, 0, "Purged cache successfully";
+ok scalar(keys %fingerprints) == 0, "Purged cache successfully";
 
 # Verify that the hash is tied
 ok tied %fingerprints ? 1 : 0, "Fingerprints tied";
@@ -178,7 +178,7 @@ else {
     $cache2->lock && exit 0;
     exit 1;
 }
-is $? >> 8, 1, "Failed to lock cache 2";
+ok +($? >> 8 == 1), "Failed to lock cache 2";
 ok $cache1->unlock ? 1 : 0, "Unlocked cache 1";
 
 if (my $pid = fork()) {
@@ -188,7 +188,7 @@ else {
     $cache2->lock && $cache2->unlock && exit 1;
     exit 0;
 }
-is $? >> 8, 1, "Locked and unlocked cache 2";
+ok +($? >> 8 == 1), "Locked and unlocked cache 2";
 
 # Destroy the caches
 undef $cache1;
@@ -256,7 +256,7 @@ $cache = new Email::Fingerprint::Cache({
 # Open the cache.
 ok $cache,       "New cache for TTL test";
 ok $cache->open, "Opened cache";
-is scalar keys %fingerprints, 0, "Cache initially empty";
+ok scalar(keys %fingerprints) == 0, "Cache initially empty";
 
 # Populate the cache with 500 items each: less than 60 seconds old;
 # between 60 and 120 seconds old; older than 120 seconds.
@@ -276,28 +276,28 @@ $fingerprints{102} = 0;
 $fingerprints{103} = '';
 
 # Now confirm that they're there
-is scalar keys %fingerprints, 1503, "Added fingerprints OK";
+ok scalar(keys %fingerprints) == 1503, "Added fingerprints OK";
 
 # Next, purge items older than 2 minutes, and check. The "false"
 # fingerprints should also be gone.
 $cache->purge( ttl => 120 );
-is scalar keys %fingerprints, 1000, "First purge OK";
+ok scalar(keys %fingerprints) == 1000, "First purge OK";
 
 # Then purge using the default TTL, which we set earlier to 60.
 # Confirm that the default TTL is used and not, e.g., 120.
 $cache->purge;
-is scalar keys %fingerprints, 500, "Second purge OK";
+ok scalar(keys %fingerprints) == 500, "Second purge OK";
 
 # Purge using a TTL of -1, which should remove everything
 $cache->purge( ttl => -1 );
-is scalar keys %fingerprints, 0, "Final purge OK";
+ok scalar(keys %fingerprints) == 0, "Final purge OK";
 
 # And finally, add one entry that WON'T be purged.
 $fingerprints{1} = time;
 
 # Try to purge it anyway
 $cache->purge( ttl => 0 );
-is scalar keys %fingerprints, 1, "Preserved same-second fingerprint";
+ok scalar(keys %fingerprints) == 1, "Preserved same-second fingerprint";
 delete $fingerprints{1};
 
 # Clean up
@@ -323,6 +323,9 @@ $cache = new Email::Fingerprint::Cache({
 
 # Open the cache file
 ok $cache->open, "Opened cache file successfully";
+
+# Purge the cache, in case there's leftover test data around
+$cache->purge( ttl => -1 );
 
 # Add our data to the hash
 $hash{$_} = $data->{$_} for keys %$data;
@@ -362,12 +365,12 @@ $cache = new Email::Fingerprint::Cache({
 
 # Nothing should happen, either, if the file is locked
 $cache->lock;
-is $cache->set_file('foo'), undef, "Cache is locked";
+ok !defined $cache->set_file('foo'), "Cache is locked";
 $cache->unlock;
 
 # Nothing should happen, either, if the file is locked
 $cache->open;
-is $cache->set_file('foo'), undef, "Cache is open";
+ok !defined $cache->set_file('foo'), "Cache is open";
 $cache->close;
 
 # Finally, the file is closed and unlocked, so it should work

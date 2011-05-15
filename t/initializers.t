@@ -78,7 +78,7 @@ sub run_test {
             open "INPUT", "<", $file;
             my $fh = new Email::Fingerprint( \%opts );
             $fh->read_filehandle( \*INPUT );
-            is $fh->checksum, $result, "Filehandle initalizer ($n).";
+            ok $fh->checksum eq $result, "Filehandle initalizer ($n).";
             close INPUT;
         }
 
@@ -91,14 +91,14 @@ sub run_test {
         {
             my $fh = new Email::Fingerprint( \%opts );
             $fh->read_string( join("", @data) );
-            is $fh->checksum, $result, "String initializer ($n).";
+            ok $fh->checksum eq $result, "String initializer ($n).";
         }
 
         # Arrayref initializer
         {
             my $fh = new Email::Fingerprint( \%opts );
             $fh->read_arrayref( \@data );
-            is $fh->checksum, $result, "Array initializer ($n).";
+            ok $fh->checksum eq $result, "Array initializer ($n).";
         }
     }
 }

@@ -6,6 +6,8 @@ use warnings;
 use Test::More qw(no_plan);
 use Test::Trap;
 
+use File::Path 2.0 qw( remove_tree );
+
 use_ok "Email::Fingerprint::App::EliminateDups";
 
 my $app;
@@ -22,37 +24,18 @@ my ($process_options, $exit_retry);
 
 # Exit-status check
 trap { $exit_retry->("test message") };
-is $trap->exit, 111, "Exit status 111";
+ok $trap->exit == 111, "Exit status 111";
 like $trap->stderr, qr/test message/, "Warning message";
 
 # Two ways to get help messages
 for my $option (qw{ --help --bogus }) {
     trap { $process_options->($option) };
-    is $trap->exit, 111, "Exit status 111 for $option";
+    ok $trap->exit == 111, "Exit status 111 for $option";
     like $trap->stderr, qr/usage:/, "Usage message for $option";
 }
 
 # Try once with valid args; these options will persist.
 ok ! $process_options->('--no-purge', '--no-check'), "Valid options";
-
-# Create a default cache file
-open F, ">", ".maildups.db";
-close F;
-
-# Try reading a cache with no permission
-chmod 0, ".maildups.db";
-trap { $app->open_cache };
-is $trap->exit, 111, "Cache with no permission";
-like $trap->stderr, qr/permission denied/i, "Correct error message";
-unlink ".maildups.db"; # So it will get recreated with default perms
-
-# Try dumping the cache contents, which are empty
-is $app->dump_cache, undef, "Unrequested dump is no-op";
-$process_options->('--dump');
-trap { $app->dump_cache };
-ok ! $trap->exit, "Dumped cache";
-is $trap->stderr, '', "No errors or warnings";
-is $trap->stdout, '', "No output (empty cache)";
 
 # Basic calls
 ok $app->open_cache, "Opened default cache";
@@ -71,33 +54,52 @@ ok $app->purge_cache, "Purging empty cache";
 $process_options->('--no-check');
 ok ! $app->check_fingerprint, "Unrequested fingerprint check";
 
+# Point cache at temp directory now
+my $tmp = "t/tmp";
+$process_options->("$tmp/cache");
+
 # Create empty cache
-$process_options->('t/data/cache');
+remove_tree($tmp);
+mkdir $tmp;
 $app->open_cache;
 $app->close_cache;
 
-# Use test emails
+# Cache fingerprints for test emails
 for my $n (1..6) {
     # Open the test email
     open EMAIL, "<", "t/data/$n.txt";
     local *STDIN = *EMAIL;
 
     # Check its fingerprint
-    trap { $app->run("t/data/cache") };
+    trap { $app->run("$tmp/cache") };
     ok ! $trap->exit, "First copy of message $n accepted";
-    is $trap->stderr, '', "No error messages";
-    is $trap->stdout, '', "No output";
+    ok $trap->stderr eq '', "No error messages";
+    ok $trap->stdout eq '', "No output";
 
     # "Reopen" the email
     seek EMAIL, 0, 0;
 
     # Check again
-    trap { $app->run("t/data/cache") };
-    is $trap->exit, 99, "Second copy of message $n rejected";
-    is $trap->stderr, '', "No error messages";
-    is $trap->stdout, '', "No output";
+    trap { $app->run("$tmp/cache") };
+    ok $trap->exit == 99, "Second copy of message $n rejected";
+    ok $trap->stderr eq '', "No error messages";
+    ok $trap->stdout eq '', "No output";
 }
 
+# Take away permissions and then try reading cache
+chmod 0, "$_" for glob "$tmp/*";
+trap { $app->open_cache };
+ok $trap->exit == 111, "Cache with no permission";
+like $trap->stderr, qr/bad file descriptor/i, "Got error message (namely, a confusing one from tie)";
+
+# Try dumping the cache contents, which are empty
+ok !defined $app->dump_cache, "Unrequested dump is no-op";
+$process_options->('--dump');
+trap { $app->dump_cache };
+ok ! $trap->exit, "Dumped cache";
+ok $trap->stderr eq '', "No errors or warnings";
+ok $trap->stdout eq '', "No output (empty cache)";
+
 # Clean up a little
-unlink ".maildups.db";
-unlink "t/data/cache.db";
+unlink "$_" for glob ".maildups*";
+remove_tree($tmp);

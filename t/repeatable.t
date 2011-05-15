@@ -38,14 +38,14 @@ for my $file ( glob "t/data/*.txt" ) {
 
         # Verify that repeated calls return the same result
         for my $m (1..3) {
-            is $result, $fp->checksum, "Message $n, attempt $m"
+            ok $result eq $fp->checksum, "Message $n, attempt $m"
         }
 
         # Again, this time changing the input within the checksum call
         for my $m (1..3) {
-            is $result, $fp->checksum({ input => $email, %options }),
+            ok $result eq $fp->checksum({ input => $email, %options }),
                 "Message $n, string $m";
-            is $result, $fp->checksum({ input => \@lines, %options }),
+            ok $result eq $fp->checksum({ input => \@lines, %options }),
                 "Message $n, array $m";
         }
 

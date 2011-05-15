@@ -29,7 +29,7 @@ for my $n ( 1..4 ) {
     {
         open "INPUT", "<", $file;
         my $fh = new Email::Fingerprint({ input => \*INPUT, %opts });
-        is $fh->checksum, $result, "Filehandle constructor ($n).";
+        ok $fh->checksum eq $result, "Filehandle constructor ($n).";
         close INPUT;
     }
 
@@ -41,12 +41,12 @@ for my $n ( 1..4 ) {
     # String constructor
     {
         my $fh = new Email::Fingerprint({ input => join("", @data), %opts });
-        is $fh->checksum, $result, "String constructor ($n).";
+        ok $fh->checksum eq $result, "String constructor ($n).";
     }
 
     # Array constructor
     {
         my $fh = new Email::Fingerprint({ input => \@data, %opts });
-        is $fh->checksum, $result, "Array constructor ($n).";
+        ok $fh->checksum eq $result, "Array constructor ($n).";
     }
 }
