@@ -90,7 +90,7 @@ for my $n (1..6) {
 chmod 0, "$_" for glob "$tmp/*";
 trap { $app->open_cache };
 ok $trap->exit == 111, "Cache with no permission";
-like $trap->stderr, qr/bad file descriptor/i, "Got error message (namely, a confusing one from tie)";
+like $trap->stderr, qr/couldn't open/i, "Got error message (namely, a confusing one from tie)";
 
 # Try dumping the cache contents, which are empty
 ok !defined $app->dump_cache, "Unrequested dump is no-op";
