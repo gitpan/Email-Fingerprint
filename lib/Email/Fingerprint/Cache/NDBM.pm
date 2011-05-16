@@ -7,6 +7,7 @@ use strict;
 use Fcntl;
 use NDBM_File;
 use Carp qw(carp);
+use File::Basename;
 use LockFile::Simple;
 
 =head1 NAME
@@ -156,6 +157,12 @@ sub lock {
     my $file = $file{ ident $self };
 
     my $mgr = $mgr{ ident $self };
+
+    # Minor validation that LockFile::Simple doesn't perform
+    if (not -w dirname($file)) {
+        warn "Directory " . dirname($file) . " is not writable\n";
+        return;
+    }
 
     # Perform the lock
     my $lock

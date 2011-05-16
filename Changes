@@ -1,5 +1,7 @@
 Revision history for Email-Fingerprint
 
+0.33    2011-05-15
+        Fix for odd Solaris failure. TNX Nigel Horne
 0.32    2011-05-16
         Removed Test::Differences because it caused spurious test failures.
 0.31    2011-05-15

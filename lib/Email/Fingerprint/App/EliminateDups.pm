@@ -149,6 +149,7 @@ sub dump_cache {
     my $self = shift;
 
     return unless $self->get_dump;
+    return unless $self->get_cache;
 
     # Dump the contents of the hashfile in a human readable format
     $self->get_cache->dump;
@@ -243,6 +244,7 @@ sub _init :PRIVATE {
     my $obj_ID = ident $self;
 
     $dbname{$obj_ID}   = '.maildups';
+    $self->close_cache; # A no-op if we don't have a cache yet
 
     $dump{$obj_ID}     = 0;
     $help{$obj_ID}     = 0;

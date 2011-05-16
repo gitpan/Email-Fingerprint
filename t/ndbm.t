@@ -7,6 +7,8 @@ use warnings;
 use Test::More qw(no_plan);
 use Test::Exception;
 
+use File::Path 2.0 qw( remove_tree );
+
 use_ok "Email::Fingerprint::Cache";
 use_ok "Email::Fingerprint::Cache::NDBM";
 
@@ -29,7 +31,9 @@ ok !defined $cache->close, "Can't close file that isn't open";
 ok !defined $backend->lock, "Can't lock undefined file";
 
 # Try opening a file under adverse conditions
-my $file = "t/data/tmp_cache";
+my $tmp  = "t/data/tmp";
+my $file = "$tmp/tmp_cache";
+mkdir $tmp;
 
 ok $cache->set_file($file), "Set new cache file";
 ok $cache->open, "Opened file";
@@ -45,14 +49,14 @@ ok $cache->unlock, "Unlocking again silently succeeds";
 
 # Turn off access permissions
 {
-open NULL, ">", "t/data/out.tmp";
+open NULL, ">", "$tmp/out.tmp";
 local(*STDERR) = *NULL;
 
-chmod(0, $_) for glob "$file*";
+chmod 0, $tmp;
 ok !defined $cache->open, "Can't open file";
 ok $cache->lock, "Can still lock file, though";
 ok $cache->unlock, "Can unlock as well";
-
-unlink "t/data/out.tmp";
-unlink $_ for glob "$file*";
 }
+
+# Clean up
+remove_tree($tmp);

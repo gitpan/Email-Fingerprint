@@ -50,12 +50,20 @@ $process_options->();
 $app->open_cache();
 ok $app->purge_cache, "Purging empty cache";
 
+# Dumping the cache contents, which are empty
+ok !defined $app->dump_cache, "Unrequested dump is no-op";
+$process_options->('--dump');
+trap { $app->dump_cache };
+ok ! $trap->exit, "Dumped cache";
+ok $trap->stderr eq '', "No errors or warnings";
+ok $trap->stdout eq '', "No output (empty cache)";
+
 # Basic fingerprint calls
 $process_options->('--no-check');
 ok ! $app->check_fingerprint, "Unrequested fingerprint check";
 
 # Point cache at temp directory now
-my $tmp = "t/tmp";
+my $tmp = "t/data/tmp";
 $process_options->("$tmp/cache");
 
 # Create empty cache
@@ -87,18 +95,18 @@ for my $n (1..6) {
 }
 
 # Take away permissions and then try reading cache
-chmod 0, "$_" for glob "$tmp/*";
+chmod(0, $_) for glob("$tmp/*");
 trap { $app->open_cache };
-ok $trap->exit == 111, "Cache with no permission";
+ok $trap->exit == 111, "Cache with no file permission";
+ok $trap->stdout eq '', "No output";
 like $trap->stderr, qr/couldn't open/i, "Got error message (namely, a confusing one from tie)";
 
-# Try dumping the cache contents, which are empty
-ok !defined $app->dump_cache, "Unrequested dump is no-op";
-$process_options->('--dump');
-trap { $app->dump_cache };
-ok ! $trap->exit, "Dumped cache";
-ok $trap->stderr eq '', "No errors or warnings";
-ok $trap->stdout eq '', "No output (empty cache)";
+# Take away more permissions
+chmod 0, $tmp;
+trap { $app->open_cache };
+ok $trap->exit == 111, "Cache with no directory permission";
+ok $trap->stdout eq '', "No output";
+like $trap->stderr, qr/not writable.*couldn't lock/is, "Got locking error";
 
 # Clean up a little
 unlink "$_" for glob ".maildups*";
