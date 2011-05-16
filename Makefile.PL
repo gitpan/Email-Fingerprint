@@ -26,7 +26,6 @@ WriteMakefile(
         'Mail::Header'      => 0,
         'NDBM_File'         => 0,
         'Scalar::Util'      => 0,
-        'Test::Differences' => 0,
         'Test::Exception'   => 0,
         'Test::More'        => 0,
         'Test::Warn'        => 0,

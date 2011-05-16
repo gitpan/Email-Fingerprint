@@ -12,7 +12,6 @@ use Test::More qw( no_plan );
 use Test::Exception;
 use Test::Warn;
 use Test::Stdout;
-use Test::Differences;
 
 # Sentinel object to delete data files
 package Sentinel;
@@ -347,7 +346,7 @@ my $standard = join '', <IN>;
 close IN;
 
 # Compare
-eq_or_diff_text $output, $standard, "Cache dumped correctly";
+ok $output eq $standard, "Cache dumped correctly";
 
 # Clean up
 lives_ok { $cache->close } "Closed cache without incident";

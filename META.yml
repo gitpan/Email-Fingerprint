@@ -1,5 +1,5 @@
 name:         Email-Fingerprint
-version:      0.31
+version:      0.32
 author:
   - Len Budney <lbudney@pobox.com>
 meta-spec:
@@ -21,7 +21,6 @@ requires:
   Mail::Header:                 0
   NDBM_File:                    0
   Scalar::Util:                 0
-  Test::Differences:            0
   Test::Exception:              0
   Test::More:                   0
   Test::Warn:                   0
@@ -33,7 +32,6 @@ build_requires:
   File::Path:			        0
   File::Slurp:                  0
   File::Spec:                   0
-  Test::Differences:            0
   Test::Exception:              0
   Test::More:                   0
   Test::Stdout:                 0
