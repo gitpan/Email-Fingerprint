@@ -17,7 +17,7 @@ WriteMakefile(
         'Carp'              => 0,
         'Class::Std'        => 0,
         'Fcntl'             => 0,
-        'File::Path'        => 2.0,
+        'File::Path'        => 2.08,
         'File::Slurp'       => 0,
         'File::Spec'        => 0,
         'FileHandle'        => 0,

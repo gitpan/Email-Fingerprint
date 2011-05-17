@@ -1,5 +1,5 @@
 name:         Email-Fingerprint
-version:      0.34
+version:      0.35
 author:
   - Len Budney <lbudney@pobox.com>
 meta-spec:
@@ -13,7 +13,7 @@ requires:
   Class::Std:                   0
   English:                      0
   Fcntl:                        0
-  File::Path:			        0
+  File::Path:			        2.08
   File::Slurp:                  0
   File::Spec:                   0
   FileHandle:                   0
@@ -29,7 +29,7 @@ requires:
 build_requires:
   English:                      0
   Data::Dump:                   0
-  File::Path:			        0
+  File::Path:			        2.08
   File::Slurp:                  0
   File::Spec:                   0
   Test::Exception:              0
