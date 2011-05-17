@@ -52,7 +52,7 @@ ok $cache->unlock, "Unlocking again silently succeeds";
 open NULL, ">", "$tmp/out.tmp";
 local(*STDERR) = *NULL;
 
-chmod 0, $tmp;
+chmod(0, $_) for glob("$tmp/*");
 ok !defined $cache->open, "Can't open file";
 ok $cache->lock, "Can still lock file, though";
 ok $cache->unlock, "Can unlock as well";
