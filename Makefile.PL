@@ -1,8 +1,34 @@
-require 5.006;
+require 5.007003;
 
 use strict;
 use warnings;
 use ExtUtils::MakeMaker;
+
+# Automated tools don't handle this dependency automatically, because
+# it's part of perl-core--yet some broken systems are actually missing
+# them!
+for my $module (qw/
+    Carp
+    Fcntl
+    FileHandle
+    NDBM_File
+/) {
+    eval "use $module";
+    die <<EOF if $@;
+
+    ****************************************************************
+    I am unable to load the core module "$module". You must install
+    $module and then try installing Email::Fingerprint again.  Your
+    Perl installation should have included these modules, so if
+    they're missing it suggests something might be very wrong, or
+    you might be using too old a Perl version.
+
+    Sorry for any inconvenience!
+    ****************************************************************
+
+EOF
+}
+
 
 WriteMakefile(
     NAME                => 'Email::Fingerprint',
