@@ -61,3 +61,21 @@ WriteMakefile(
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Email-Fingerprint-*' },
 );
+
+{
+    package MY;
+    sub postamble {
+        return <<"EOF";
+authortest: test
+\t\$(MAKE) -e \$(TEST_TYPE) TEST_FILES="xt/*.t"
+
+EOF
+    }
+    
+    sub dist_test {
+        my $self      = shift;
+        my $inherited =  $self->SUPER::dist_test(@_);
+        $inherited    =~ s/ test / authortest /;
+        return $inherited;
+    }
+}

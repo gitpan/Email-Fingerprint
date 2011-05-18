@@ -136,13 +136,14 @@ sub BUILD {
 
 =head2 set_file
 
-  $file = $cache->set_file( 'somefile' ) or die "Failed to set filename";
-  # now $file eq 'somefile.db' or 'somefile.dir', etc., NOT 'somefile'
+  $file = $cache->set_file( 'foo' ) or die "Failed to set filename";
+  # now $file eq 'foo.db' or 'foo.dir', etc., depending on the backend;
+  # it is almost certainly NOT 'foo'.
 
 Sets the file to be used for the cache. Returns the actual filename
 on success; false on failure.
 
-The actual filename will probably differ from the 'somefile', because
+The actual filename will probably differ from the 'foo', because
 the backend will usually add an extension or otherwise munge it.
 
 C<set_file> has I<no> effect while the cache file is locked or open!

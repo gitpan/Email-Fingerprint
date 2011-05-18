@@ -17,11 +17,11 @@ Email::Fingerprint - Calculate a digest for recognizing duplicate emails
 
 =head1 VERSION
 
-Version 0.36
+Version 0.37
 
 =cut
 
-our $VERSION = '0.36';
+our $VERSION = '0.37';
 
 =head1 SYNOPSIS
 
@@ -142,8 +142,9 @@ sub checksum {
   $fingerprint->read_string( $email, \%mh_args );
 
 Accepts the email message C<$email> and attempts to read it
-intelligently, distinguishing strings, arrayrefs and filehandles.
-If supplied, the optional hashref is passed on to Mail::Header.
+intelligently, distinguishing strings, array references and file
+handles.  If supplied, the optional hash reference is passed on to
+Mail::Header.
 
 =cut
 
@@ -157,7 +158,7 @@ sub read {
     }
     elsif ( ref $input eq 'ARRAY' ) {
 
-        # Another simple case: arrayrefs
+        # Another simple case: array references
         return $self->read_arrayref( $input, $mh_args );
     }
     elsif ( reftype $input eq 'GLOB' ) {

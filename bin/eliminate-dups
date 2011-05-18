@@ -26,8 +26,8 @@ If C<dbname> is not specified, it defaults to C<$HOME/.maildups>.
 
 Reads an email message on standard input and calculates a fingerprint
 based on the mail headers. If the fingerprint already exists in the
-hashfile, then the message is a duplicate.  If the fingerprint does
-not exist, save the fingerprint in the hashfile and deliver the
+hash file, then the message is a duplicate.  If the fingerprint does
+not exist, save the fingerprint in the hash file and deliver the
 message.
 
 =head1 OPTIONS

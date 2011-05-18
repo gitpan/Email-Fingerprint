@@ -15,7 +15,6 @@ t/abuse.t
 t/boilerplate.t
 t/cache.t
 t/constructor.t
-t/cover.t
 t/data/1.txt
 t/data/2.txt
 t/data/3.txt
@@ -28,12 +27,14 @@ t/distribution.t
 t/eliminate_dups.t
 t/eliminate_dups.pl
 t/initializers.t
-t/kwalitee.t
 t/ndbm.t
-t/perl-critic.t
-t/perlcriticrc
 t/pod-coverage.t
 t/pod.t
 t/repeatable.t
 t/smart_read.t
 t/strict.t
+xt/cover.t
+xt/kwalitee.t
+xt/perl-critic.t
+xt/perlcriticrc
+xt/pod-spelling.t
