@@ -38,7 +38,7 @@ my $file     = "t/data/tmp_cache";
 
 lives_ok {
     $cache     =  new Email::Fingerprint::Cache({
-        backend   => "NDBM",
+        backend   => "AnyDBM",
         hash      => \%fingerprints,
         file      => $file,         # Created if doesn't exist
         ttl       => 60,            # Purge records after one minute

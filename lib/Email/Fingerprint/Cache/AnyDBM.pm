@@ -1,18 +1,18 @@
-package Email::Fingerprint::Cache::NDBM;
+package Email::Fingerprint::Cache::AnyDBM;
 use Class::Std;
 
 use warnings;
 use strict;
 
 use Fcntl;
-use NDBM_File;
+use AnyDBM_File;
 use Carp qw(carp);
 use File::Basename;
 use LockFile::Simple;
 
 =head1 NAME
 
-Email::Fingerprint::Cache::NDBM - NDBM backend for Email::Fingerprint::Cache
+Email::Fingerprint::Cache::AnyDBM - AnyDBM backend for Email::Fingerprint::Cache
 
 =head1 VERSION
 
@@ -27,7 +27,7 @@ our $VERSION = '0.01';
     use Email::Fingerprint::Cache;
 
     my $foo = Email::Fingerprint::Cache->new({
-        backend => 'NDBM',
+        backend => 'AnyDBM',
     });
     ...
 
@@ -47,7 +47,7 @@ my %mgr  :ATTR                                = ();
 
 =head2 new
 
-  $cache = new Email::Fingerprint::Cache::NDBM({
+  $cache = new Email::Fingerprint::Cache::AnyDBM({
     file => $filename,  # Mandatory
   });
 
@@ -87,7 +87,7 @@ sub open {
 
     my $hash = $self->get_hash;
 
-    tie %$hash, 'NDBM_File', $file, O_CREAT|O_RDWR, oct(600);
+    tie %$hash, 'AnyDBM_File', $file, O_CREAT|O_RDWR, oct(600);
 
     if ( not $self->is_open ) {
         carp "Couldn't open $file";
@@ -223,7 +223,7 @@ your bug as I make changes.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Email::Fingerprint::Cache::NDBM
+    perldoc Email::Fingerprint::Cache::AnyDBM
 
 You can also look for information at:
 

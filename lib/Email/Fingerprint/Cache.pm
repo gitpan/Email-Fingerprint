@@ -27,7 +27,7 @@ our $VERSION = '0.01';
 
     # Create a cache
     my $cache     =  new Email::Fingerprint::Cache(
-        backend   => "NDBM",
+        backend   => "AnyDBM",
         hash      => \%fingerprints,
         file      => $file,             # Created if doesn't exist
         ttl       => 3600 * 24 * 7,     # Purge records after one week
@@ -67,7 +67,7 @@ our $VERSION = '0.01';
 
 my %hash    :ATTR( :get<hash> )                  = ();
 my %ttl     :ATTR( :name<ttl> :default(604800) ) = ();
-my %backend :ATTR( :init_arg<backend> :default('NDBM') ) = ();
+my %backend :ATTR( :init_arg<backend> :default('AnyDBM') ) = ();
 
 =head1 METHODS
 
@@ -75,7 +75,7 @@ my %backend :ATTR( :init_arg<backend> :default('NDBM') ) = ();
 
     my $fingerprint =  new Email::Fingerprint::Cache(
         file        => $file,   # Default: .maildups
-        backend     => "NDBM",  # Default: "NDBM"
+        backend     => "AnyDBM",  # Default: "AnyDBM"
         ttl         => $sec,    # Default: 3600*24*7
         hash        => $ref,    # Optional
     );
@@ -98,8 +98,8 @@ sub BUILD {
     # Backend will also need access to the hash
     $args->{hash} = $hash{$ident};
 
-    # Default backend is NDBM
-    my $backend = defined $args->{backend} ? $args->{backend} : 'NDBM';
+    # Default backend is AnyDBM
+    my $backend = defined $args->{backend} ? $args->{backend} : 'AnyDBM';
 
     # Default cache file
     $args->{file} ||= '.maildups';

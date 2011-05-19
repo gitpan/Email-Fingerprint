@@ -1,5 +1,7 @@
 Revision history for Email-Fingerprint
 
+0.38    2011-05-18
+        Changed backend AnyDBM: RedHat is missing NDBM_File; OSX, GDBM_File. Sigh.
 0.37    2011-05-18
         Moved author tests to xt/ and added authortest target.
 0.36    2011-05-18

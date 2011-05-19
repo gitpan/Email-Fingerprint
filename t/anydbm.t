@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# Test the NDBM cache backend
+# Test the AnyDBM cache backend
 
 use strict;
 use warnings;
@@ -10,7 +10,7 @@ use Test::Exception;
 use File::Path 2.0 qw( remove_tree );
 
 use_ok "Email::Fingerprint::Cache";
-use_ok "Email::Fingerprint::Cache::NDBM";
+use_ok "Email::Fingerprint::Cache::AnyDBM";
 
 my $cache;
 

@@ -6,7 +6,7 @@ BEGIN: {
     use_ok( 'Email::Fingerprint' );
     use_ok( 'Email::Fingerprint::App::EliminateDups' );
     use_ok( 'Email::Fingerprint::Cache' );
-    use_ok( 'Email::Fingerprint::Cache::NDBM' );
+    use_ok( 'Email::Fingerprint::Cache::AnyDBM' );
 }
 
 diag( "Testing Email::Fingerprint $Email::Fingerprint::VERSION, Perl $]" );
