@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Email-Fingerprint
-version:            0.38
+version:            0.39
 abstract:           Calculate a digest for recognizing duplicate emails
 author:
   - Len Budney <lbudney@pobox.com>

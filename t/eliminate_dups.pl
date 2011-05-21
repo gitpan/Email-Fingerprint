@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use English;
 
 use Test::More qw(no_plan);
 use Test::Trap;
@@ -95,18 +96,39 @@ for my $n (1..6) {
 }
 
 # Take away permissions and then try reading cache
-chmod(0, $_) for glob("$tmp/*");
-trap { $app->open_cache };
-ok $trap->exit == 111, "Cache with no file permission";
-ok $trap->stdout eq '', "No output";
-like $trap->stderr, qr/couldn't open/i, "Got error message (namely, a confusing one from tie)";
+SKIP: {
+    if ($EUID == 0) {
+        diag <<"EOF";
 
-# Take away more permissions
-chmod 0, $tmp;
-trap { $app->open_cache };
-ok $trap->exit == 111, "Cache with no directory permission";
-ok $trap->stdout eq '', "No output";
-like $trap->stderr, qr/not writable.*couldn't lock/is, "Got locking error";
+
+        ***************************************************************************
+                                YOU ARE RUNNING TESTS AS ROOT!
+
+         You REALLY should not do that. Certain tests are skipped when you run as
+         root, so you're not getting the full experience. Besides, what if I go
+         haywire? I could reformat your disks, snoop your emails and kidnap your
+         pets! Did you ever think of that? Yeah, running me as root was probably
+         not the best idea you've ever had.
+        ***************************************************************************
+
+EOF
+
+        skip "Can't test permissions when running as root";
+    }
+
+    chmod(0, $_) for glob("$tmp/*");
+    trap { $app->open_cache };
+    ok $trap->exit == 111, "Cache with no file permission";
+    ok $trap->stdout eq '', "No output";
+    like $trap->stderr, qr/couldn't open/i, "Got error message (namely, a confusing one from tie)";
+
+    # Take away more permissions
+    chmod 0, $tmp;
+    trap { $app->open_cache };
+    ok $trap->exit == 111, "Cache with no directory permission";
+    ok $trap->stdout eq '', "No output";
+    like $trap->stderr, qr/not writable.*couldn't lock/is, "Got locking error";
+}
 
 # Clean up a little
 unlink "$_" for glob ".maildups*";

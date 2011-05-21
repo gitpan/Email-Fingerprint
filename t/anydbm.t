@@ -3,6 +3,7 @@
 
 use strict;
 use warnings;
+use English;
 
 use Test::More qw(no_plan);
 use Test::Exception;
@@ -48,14 +49,16 @@ ok $backend->is_locked == 0, "Cache is unlocked";
 ok $cache->unlock, "Unlocking again silently succeeds";
 
 # Turn off access permissions
-{
-open NULL, ">", "$tmp/out.tmp";
-local(*STDERR) = *NULL;
+SKIP: {
+    skip "Can't test permissions when running as root" if $EUID == 0;
 
-chmod(0, $_) for glob("$tmp/*");
-ok !defined $cache->open, "Can't open file";
-ok $cache->lock, "Can still lock file, though";
-ok $cache->unlock, "Can unlock as well";
+    open NULL, ">", "$tmp/out.tmp";
+    local(*STDERR) = *NULL;
+
+    chmod(0, $_) for glob("$tmp/*");
+    ok !defined $cache->open, "Can't open file";
+    ok $cache->lock, "Can still lock file, though";
+    ok $cache->unlock, "Can unlock as well";
 }
 
 # Clean up
