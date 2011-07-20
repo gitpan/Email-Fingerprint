@@ -10,9 +10,9 @@ use strict;
 use warnings;
 use Email::Fingerprint;
 
-use Test::More qw( no_plan );
+use File::Slurp qw( read_file );
 
-use File::Slurp;
+use Test::More qw( no_plan );
 
 # Options for the test.
 my %options = (

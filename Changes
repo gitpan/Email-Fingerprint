@@ -1,5 +1,7 @@
 Revision history for Email-Fingerprint
 
+0.40    2011-07-19
+        Added some minimum-version requirements and cleaned up some tests.
 0.39    2011-05-21
         Now file-permission tests are skipped when tests are run as root.
         TNX Nigel Horne.

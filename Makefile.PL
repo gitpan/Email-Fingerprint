@@ -1,4 +1,4 @@
-require 5.007003;
+require 5.008002;
 
 use strict;
 use warnings;
@@ -41,22 +41,21 @@ WriteMakefile(
     NO_META             => 1,
     PREREQ_PM => {
         'Carp'              => 0,
-        'Class::Std'        => 0,
+        'Class::Std'        => 0.0.2,
         'Fcntl'             => 0,
         'File::Path'        => 2.08,
-        'File::Slurp'       => 0,
-        'File::Spec'        => 0,
+        'File::Slurp'       => 0.01,
+        'File::Spec'        => 0.82,
         'FileHandle'        => 0,
-        'List::MoreUtils'   => 0,
-        'LockFile::Simple'  => 0,
-        'Mail::Header'      => 0,
-        'AnyDBM_File'       => 0,
+        'List::MoreUtils'   => 0.04,  # i.e., any version
+        'LockFile::Simple'  => 0.2.0, # 0.1@0 works but has bad version
+        'Mail::Header'      => 1.40,
+        'AnyDBM_File'       => 1.00,  # i.e., any version
         'Scalar::Util'      => 0,
-        'Test::Exception'   => 0,
+        'Test::Exception'   => 0.07,
         'Test::More'        => 0,
-        'Test::Warn'        => 0,
+        'Test::Warn'        => 0.09,
         'overload'          => 0,
-        'version'           => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Email-Fingerprint-*' },
@@ -103,3 +102,5 @@ sub gripe
 
 EOF
 }
+
+1;

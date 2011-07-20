@@ -8,7 +8,8 @@ use strict;
 use warnings;
 use Email::Fingerprint;
 
-use Test::More qw( no_plan );
+use POSIX;
+use Test::More;
 use Test::Exception;
 use Test::Warn;
 use Test::Stdout;
@@ -174,8 +175,7 @@ if (my $pid = fork()) {
     waitpid $pid, 0;
 }
 else {
-    $cache2->lock && exit 0;
-    exit 1;
+    $cache2->lock ? POSIX::_exit(0) : POSIX::_exit(1);
 }
 ok +($? >> 8 == 1), "Failed to lock cache 2";
 ok $cache1->unlock ? 1 : 0, "Unlocked cache 1";
@@ -184,8 +184,9 @@ if (my $pid = fork()) {
     waitpid $pid, 0;
 }
 else {
-    $cache2->lock && $cache2->unlock && exit 1;
-    exit 0;
+    diag "Failed to lock cache 2",   POSIX::_exit(0) unless $cache2->lock;
+    diag "Failed to unlock cache 2", POSIX::_exit(0) unless $cache2->unlock;
+    POSIX::_exit(1);
 }
 ok +($? >> 8 == 1), "Locked and unlocked cache 2";
 
@@ -377,3 +378,6 @@ ok $cache->set_file('foo'), "Changing the file name";
 
 # Clean up
 unlink "t/data/cache.db";
+
+# That's all, folks!
+done_testing();
