@@ -32,9 +32,11 @@ xt/boilerplate.t
 xt/cover.t
 xt/distribution.t
 xt/kwalitee.t
+xt/modules.t
 xt/perl-critic.t
 xt/perlcriticrc
 xt/pod-coverage.t
 xt/pod-spelling.t
 xt/pod.t
+xt/prereqs.t
 xt/strict.t

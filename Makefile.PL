@@ -41,14 +41,14 @@ WriteMakefile(
     NO_META             => 1,
     PREREQ_PM => {
         'Carp'              => 0,
-        'Class::Std'        => 0.0.2,
+        'Class::Std'        => 0,
         'Fcntl'             => 0,
         'File::Path'        => 2.08,
         'File::Slurp'       => 0.01,
         'File::Spec'        => 0.82,
         'FileHandle'        => 0,
         'List::MoreUtils'   => 0.04,  # i.e., any version
-        'LockFile::Simple'  => 0.2.0, # 0.1@0 works but has bad version
+        'LockFile::Simple'  => 0.2,   # 0.1@0 works but has bad version
         'Mail::Header'      => 1.40,
         'AnyDBM_File'       => 1.00,  # i.e., any version
         'Scalar::Util'      => 0,

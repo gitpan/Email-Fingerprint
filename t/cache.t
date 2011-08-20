@@ -26,7 +26,14 @@ sub DESTROY {
 package main;
 
 eval "use Email::Fingerprint::Cache";
-plan ( skip_all => "Failed to load Email::Fingerprint::Cache" ) if $@;
+if ($@)
+{
+    plan ( skip_all => "Failed to load Email::Fingerprint::Cache" );
+}
+else
+{
+    plan ( tests => 51 );
+}
 
 ############################################################################
 # First, run through the general cache functionality, without stressing
@@ -159,40 +166,60 @@ undef $cache;
 ############################################################################
 # Exercise the lock() and unlock() methods
 ############################################################################
+SKIP: {
+    # We make a massive effort to make this test work on Windows,
+    # even though fork() is completely broken there. We do skip this
+    # part of the test if we simply can't launch Perl, though.
+    my $status = system qw{
+        perl -I lib -MPOSIX -MEmail::Fingerprint::Cache -e 0
+    };
+    skip "can't run perl; your system looks broken", 5 unless $status == 0;
 
-my $cache1 = new Email::Fingerprint::Cache({ file => $file });
-ok $cache1, "Cache 1 for lock test";
+    # Clean up the lockfile from any crashed test runs
+    unlink "$file.lock";
 
-my $cache2 = new Email::Fingerprint::Cache({ file => $file });
-ok $cache2, "Cache 2 for lock test";
+    # Open two caches and make 'em fight.
+    my $cache1 = new Email::Fingerprint::Cache({ file => $file });
+    ok $cache1, "Cache 1 for lock test";
 
-# Locking cache 1 should prevent locking cache2 in another process.
-# NOTE: It prevents locking cache2 in the *same* process on most UNIX
-# variants, except Solaris.
-ok $cache1->lock   ? 1 : 0, "Locked cache 1";
+    # Locking cache 1 should prevent locking the same cache in another process.
+    # NOTE: It prevents locking cache2 in the *same* process on most UNIX
+    # variants, except Solaris.
+    ok $cache1->lock   ? 1 : 0, "Locked cache 1";
 
-if (my $pid = fork()) {
-    waitpid $pid, 0;
+    # Now attempt a second lock, in a separate process, without forking.
+    # Good luck with that!
+    $status = system(
+        qw{
+            perl -I lib -MPOSIX -MEmail::Fingerprint::Cache -e
+        },
+        qq{
+            \$cache = Email::Fingerprint::Cache->new({ file => '$file' });
+            POSIX::_exit(0) if \$cache->lock;
+            POSIX::_exit(1);
+        },
+    );
+
+    ok +($status >> 8 == 1), "Failed to lock cache 2";
+    ok $cache1->unlock ? 1 : 0, "Unlocked cache 1";
+
+    $status = system(
+        qw{
+            perl -I lib -MPOSIX -MEmail::Fingerprint::Cache -e
+        },
+        qq{
+            \$cache = Email::Fingerprint::Cache->new({ file => '$file' });
+            POSIX::_exit(0) unless \$cache->lock;
+            POSIX::_exit(0) unless \$cache->unlock;
+            POSIX::_exit(1);
+        },
+    );
+
+    ok +($status >> 8 == 1), "Locked and unlocked cache 2";
+
+    # Destroy the caches
+    undef $cache1;
 }
-else {
-    $cache2->lock ? POSIX::_exit(0) : POSIX::_exit(1);
-}
-ok +($? >> 8 == 1), "Failed to lock cache 2";
-ok $cache1->unlock ? 1 : 0, "Unlocked cache 1";
-
-if (my $pid = fork()) {
-    waitpid $pid, 0;
-}
-else {
-    diag "Failed to lock cache 2",   POSIX::_exit(0) unless $cache2->lock;
-    diag "Failed to unlock cache 2", POSIX::_exit(0) unless $cache2->unlock;
-    POSIX::_exit(1);
-}
-ok +($? >> 8 == 1), "Locked and unlocked cache 2";
-
-# Destroy the caches
-undef $cache1;
-undef $cache2;
 
 ############################################################################
 # Test the ugly failsafe in the DESTROY() method

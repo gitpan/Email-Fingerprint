@@ -1,5 +1,7 @@
 Revision history for Email-Fingerprint
 
+0.41    2011-08-17
+        Removed forks from cache test so it works on Windows. Ick.
 0.40    2011-07-19
         Added some minimum-version requirements and cleaned up some tests.
 0.39    2011-05-21
