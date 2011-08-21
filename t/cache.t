@@ -9,6 +9,7 @@ use warnings;
 use Email::Fingerprint;
 
 use POSIX;
+use FindBin;
 use Test::More;
 use Test::Exception;
 use Test::Warn;
@@ -171,7 +172,7 @@ SKIP: {
     # even though fork() is completely broken there. We do skip this
     # part of the test if we simply can't launch Perl, though.
     my $status = system qw{
-        perl -I lib -MPOSIX -MEmail::Fingerprint::Cache -e 0
+        perl -I $FindBin::Bin/../lib -MPOSIX -MEmail::Fingerprint::Cache -e 0
     };
     skip "can't run perl; your system looks broken", 5 unless $status == 0;
 
@@ -191,7 +192,7 @@ SKIP: {
     # Good luck with that!
     $status = system(
         qw{
-            perl -I lib -MPOSIX -MEmail::Fingerprint::Cache -e
+            perl -I $FindBin::Bin/../lib -MPOSIX -MEmail::Fingerprint::Cache -e
         },
         qq{
             \$cache = Email::Fingerprint::Cache->new({ file => '$file' });
@@ -205,7 +206,7 @@ SKIP: {
 
     $status = system(
         qw{
-            perl -I lib -MPOSIX -MEmail::Fingerprint::Cache -e
+            perl -I $FindBin::Bin/../lib -MPOSIX -MEmail::Fingerprint::Cache -e
         },
         qq{
             \$cache = Email::Fingerprint::Cache->new({ file => '$file' });

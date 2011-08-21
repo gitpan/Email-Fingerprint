@@ -47,6 +47,7 @@ WriteMakefile(
         'File::Slurp'       => 0.01,
         'File::Spec'        => 0.82,
         'FileHandle'        => 0,
+        'FindBin'           => 0,
         'List::MoreUtils'   => 0.04,  # i.e., any version
         'LockFile::Simple'  => 0.2,   # 0.1@0 works but has bad version
         'Mail::Header'      => 1.40,
