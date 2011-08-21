@@ -1,5 +1,7 @@
 Revision history for Email-Fingerprint
 
+0.43    2011-08-21
+        Added diagnostic code to test for failure on FreeBSD.
 0.42    2011-08-21
         Test fix for BSD: I think "prove" isn't running from where I thought it was.
 0.41    2011-08-17

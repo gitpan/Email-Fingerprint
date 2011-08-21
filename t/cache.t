@@ -5,6 +5,7 @@
 use lib 'build_lib';
 
 use strict;
+use English;
 use warnings;
 use Email::Fingerprint;
 
@@ -168,12 +169,18 @@ undef $cache;
 # Exercise the lock() and unlock() methods
 ############################################################################
 SKIP: {
+    my $perl = $EXECUTABLE_NAME;
+    my $lib  = "$FindBin::Bin/../lib";
+    diag "Perl: $perl";
+    diag "Lib: $lib";
+    diag "\$0: $0";
+
     # We make a massive effort to make this test work on Windows,
     # even though fork() is completely broken there. We do skip this
     # part of the test if we simply can't launch Perl, though.
-    my $status = system qw{
-        perl -I $FindBin::Bin/../lib -MPOSIX -MEmail::Fingerprint::Cache -e 0
-    };
+    my $status = system (
+        $perl, '-I', $lib, qw/ -MPOSIX -MEmail::Fingerprint::Cache -e 0 /
+    );
     skip "can't run perl; your system looks broken", 5 unless $status == 0;
 
     # Clean up the lockfile from any crashed test runs
@@ -191,9 +198,7 @@ SKIP: {
     # Now attempt a second lock, in a separate process, without forking.
     # Good luck with that!
     $status = system(
-        qw{
-            perl -I $FindBin::Bin/../lib -MPOSIX -MEmail::Fingerprint::Cache -e
-        },
+        $perl, '-I', $lib, qw/ -MPOSIX -MEmail::Fingerprint::Cache -e /,
         qq{
             \$cache = Email::Fingerprint::Cache->new({ file => '$file' });
             POSIX::_exit(0) if \$cache->lock;
@@ -205,9 +210,7 @@ SKIP: {
     ok $cache1->unlock ? 1 : 0, "Unlocked cache 1";
 
     $status = system(
-        qw{
-            perl -I $FindBin::Bin/../lib -MPOSIX -MEmail::Fingerprint::Cache -e
-        },
+        $perl, '-I', $lib, qw/ -MPOSIX -MEmail::Fingerprint::Cache -e /,
         qq{
             \$cache = Email::Fingerprint::Cache->new({ file => '$file' });
             POSIX::_exit(0) unless \$cache->lock;
@@ -238,7 +241,7 @@ ok $cache->lock, "Locked cache";
 
 warning_like
     { undef $cache }
-    { carped => qr/before it was close/},
+    { carped => qr/before it was close/ },
     "Warns on bad destroy";
 
 # Create another one
