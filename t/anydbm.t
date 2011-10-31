@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use English;
 
-use Test::More qw(no_plan);
+use Test::More;
 use Test::Exception;
 
 use File::Path 2.0 qw( remove_tree );
@@ -63,3 +63,6 @@ SKIP: {
 
 # Clean up
 remove_tree($tmp);
+
+# That's all, folks!
+done_testing();

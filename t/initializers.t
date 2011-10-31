@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use Email::Fingerprint;
 
-use Test::More qw( no_plan );
+use Test::More;
 
 
 # Options for every test.
@@ -102,3 +102,6 @@ sub run_test {
         }
     }
 }
+
+# That's all, folks!
+done_testing();

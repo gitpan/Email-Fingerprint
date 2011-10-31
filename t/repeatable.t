@@ -12,7 +12,7 @@ use Email::Fingerprint;
 
 use File::Slurp qw( read_file );
 
-use Test::More qw( no_plan );
+use Test::More;
 
 # Options for the test.
 my %options = (
@@ -55,3 +55,6 @@ for my $file ( glob "t/data/*.txt" ) {
     # Done with this message
     close INPUT;
 }
+
+# That's all, folks!
+done_testing();

@@ -7,7 +7,7 @@ use strict;
 use warnings;
 use Email::Fingerprint;
 
-use Test::More qw( no_plan );
+use Test::More;
 
 
 # Options for every test.
@@ -50,3 +50,6 @@ for my $n ( 1..4 ) {
         ok $fh->checksum eq $result, "Array constructor ($n).";
     }
 }
+
+# That's all, folks!
+done_testing();

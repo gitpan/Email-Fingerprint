@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use English;
 
-use Test::More qw(no_plan);
+use Test::More;
 use Test::Trap;
 
 use File::Path 2.0 qw( remove_tree );
@@ -129,6 +129,9 @@ EOF
     ok $trap->stdout eq '', "No output";
     like $trap->stderr, qr/not writable.*couldn't lock/is, "Got locking error";
 }
+
+# That's all, folks!
+done_testing();
 
 # Clean up a little
 unlink "$_" for glob ".maildups*";

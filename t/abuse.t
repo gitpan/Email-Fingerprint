@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use Email::Fingerprint;
 
-use Test::More qw( no_plan );
+use Test::More;
 use Test::Exception;
 
 my $fp = new Email::Fingerprint;
@@ -23,3 +23,6 @@ ok not $fp->can('set_input' );
 dies_ok { $fp->_extract_headers } "Can't call _extract_headers";
 dies_ok { $fp->_extract_body } "Can't call _extract_body";
 dies_ok { $fp->_concat } "Can't call _concat";
+
+# That's all, folks!
+done_testing();

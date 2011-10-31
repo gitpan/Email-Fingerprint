@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use Email::Fingerprint;
 
-use Test::More qw( no_plan );
+use Test::More;
 use Test::Exception;
 
 my $fp;
@@ -84,3 +84,6 @@ SKIP: {
     $fp->read($fh);
     ok $fp->checksum eq $checksum, "Iteratable object input";
 }
+
+# That's all, folks!
+done_testing();
