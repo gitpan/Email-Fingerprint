@@ -113,7 +113,7 @@ SKIP: {
 
 EOF
 
-        skip "Can't test permissions when running as root";
+        skip "Can't test permissions when running as root", 6;
     }
 
     chmod(0, $_) for glob("$tmp/*");

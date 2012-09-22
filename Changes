@@ -1,5 +1,7 @@
 Revision history for Email-Fingerprint
 
+0.45    2012-02-24
+        Fixed skipped tests to play better with Test::More.
 0.44    2011-10-30
         Updated tests to play with latest version of Test::More.
 0.43    2011-08-21

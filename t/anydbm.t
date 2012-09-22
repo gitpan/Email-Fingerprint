@@ -50,12 +50,59 @@ ok $cache->unlock, "Unlocking again silently succeeds";
 
 # Turn off access permissions
 SKIP: {
-    skip "Can't test permissions when running as root" if $EUID == 0;
+    if ($EUID == 0)
+    {
+        diag <<"EOF";
 
+
+        ***************************************************************************
+                                YOU ARE RUNNING TESTS AS ROOT!
+
+         You REALLY should not do that. Certain tests are skipped when you run as
+         root, so you're not getting the full experience. Besides, what if I go
+         haywire? I could reformat your disks, snoop your emails and kidnap your
+         pets! Did you ever think of that? Yeah, running me as root was probably
+         not the best idea you've ever had.
+        ***************************************************************************
+
+EOF
+
+        skip "Can't test permissions when running as root", 3 if $EUID == 0;
+    }
+
+    # Redirect error messages to a temporary file
     open NULL, ">", "$tmp/out.tmp";
     local(*STDERR) = *NULL;
 
+    # Disable permissions for ALL temporary files
     chmod(0, $_) for glob("$tmp/*");
+
+    # Confirm that we can't open chmod 0 files. Sigh.
+    if (open TEST, "<", "$tmp/out.tmp")
+    {
+        diag <<"EOF";
+
+
+        ***************************************************************************
+                        YOUR SYSTEM HAS BROKEN FILE PERMISSIONS!
+
+         Either your operating system, or your Perl installation, is broken: I
+         can read files with UNIX permissions set to 0. You're probably running
+         this on Windows and/or as an administrative user, in which case I should
+         reformat your hard drive just to teach you a lesson, but I won't.
+
+         This module will probably work fine for you anyway, but I make no
+         guarantees. If your system doesn't handle file permissions sanely,
+         what else might it do that it shouldn't?
+        ***************************************************************************
+
+EOF
+
+        close TEST;
+        skip "Can't test permissions--your system or perl is broken", 3;
+    }
+
+    # Confirm that the file can't be opened
     ok !defined $cache->open, "Can't open file";
     ok $cache->lock, "Can still lock file, though";
     ok $cache->unlock, "Can unlock as well";

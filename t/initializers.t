@@ -47,15 +47,20 @@ my @tests = (
 for my $test ( @tests ) {
     SKIP: {
 
+        # Count the tests to be run
+        my @results   = @{ $test->{results} || [] };
+        my $num_tests = 3 * scalar(@results);
+
         # Decide whether to skip the test
         my $module = $test->{options}{checksum} || "";
 
         if ( not $module ) {
-            skip("Bad test: no checksum module specified");
+            skip "Bad test: no checksum module specified", $num_tests;
         }
         elsif ( $module ne "unpack" ) {
             eval "use $module;";
-            skip("Skipping test: module not installed: $module") if $@;
+            skip "Skipping test: module not installed: $module", $num_tests
+                if $@;
         }
 
         # Run the test
