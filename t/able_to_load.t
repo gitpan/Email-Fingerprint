@@ -2,7 +2,7 @@
 
 use Test::More tests => 4;
 
-BEGIN: {
+BEGIN {
     use_ok( 'Email::Fingerprint' );
     use_ok( 'Email::Fingerprint::App::EliminateDups' );
     use_ok( 'Email::Fingerprint::Cache' );
