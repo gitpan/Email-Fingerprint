@@ -39,6 +39,7 @@ WriteMakefile(
     INST_SCRIPT         => 'blib/bin',
     EXE_FILES           => [ 'bin/eliminate-dups' ],
     NO_META             => 1,
+    MIN_PERL_VERSION    => '5.008001',
     PREREQ_PM => {
         'Carp'              => 0,
         'Class::Std'        => 0,
@@ -59,7 +60,7 @@ WriteMakefile(
         'overload'          => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean               => { FILES => 'Email-Fingerprint-*' },
+    clean               => { FILES => 'Email-Fingerprint-* Debian_CPANTS.txt' },
 );
 
 {
