@@ -18,11 +18,11 @@ Email::Fingerprint::App::EliminateDups - Implements eliminate-dups functionality
 
 =head1 VERSION
 
-Version 0.26
+Version 0.48
 
 =cut
 
-our $VERSION = '0.26';
+our $VERSION = '0.48';
 
 =head1 SYNOPSIS
 

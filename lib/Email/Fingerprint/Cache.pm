@@ -13,11 +13,11 @@ Email::Fingerprint::Cache - Cache observed email fingerprints
 
 =head1 VERSION
 
-Version 0.01
+Version 0.48
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.48';
 
 =head1 SYNOPSIS
 
@@ -271,8 +271,11 @@ Purge the cache of old entries. This reduces the risk of false positives
 from things like reused message IDs, but increases the risk of false
 negatives.
 
-The default is one week. Dedicated spam-fighters might prefer to use a
-longer TTL.
+The C<ttl> option specifies the "time to live": cache entries older
+than that will be purged. The default is one week. If the TTL is
+zero, then (just as you'd expect) items one second or older will
+be purged.  If you specify a negative TTL, then the cache will be
+emptied completely.
 
 =cut
 
@@ -287,7 +290,7 @@ sub purge {
     for my $key ( keys %$hash )
     {
         my $timestamp = $hash->{$key} || 0; # Also clobbers bad data like undef
-        delete $hash->{$key} if ($now - $timestamp) > $ttl;
+        delete $hash->{$key} if ($now - $timestamp) > $ttl or $ttl < 0;
     }
 
     1;

@@ -20,33 +20,33 @@ lives_ok {
     $cache = new Email::Fingerprint::Cache({
         file => undef,
     });
-} "Constrution without filename";
+} "Construction should succeed when setting the file explicitly to undef";
 
 my $backend = $cache->get_backend;
 
 # Undefine the filename and verify that methods do nothing
 $cache->set_file(undef);
 
-ok !defined $cache->open, "Can't open undefined file";
-ok !defined $cache->close, "Can't close file that isn't open";
-ok !defined $backend->lock, "Can't lock undefined file";
+ok !defined $cache->open, "... and opening the file should fail in that case";
+ok !defined $cache->close, "... as should closing it";
+ok !defined $backend->lock, "... as should locking it";
 
 # Try opening a file under adverse conditions
 my $tmp  = "t/data/tmp";
 my $file = "$tmp/tmp_cache";
 mkdir $tmp;
 
-ok $cache->set_file($file), "Set new cache file";
-ok $cache->open, "Opened file";
-ok $backend->is_open, "Cache is open";
-ok $cache->close, "Closed file";
-ok ! $backend->is_open, "Cache is closed";
-ok $cache->lock( block => 1 ), "Locked cache with blocking";
-ok $cache->lock( block => 1 ), "Locked cache a second time";
-ok $backend->is_locked == 1, "Cache is locked";
-ok $cache->unlock, "Unlocked cache";
-ok $backend->is_locked == 0, "Cache is unlocked";
-ok $cache->unlock, "Unlocking again silently succeeds";
+ok $cache->set_file($file), "Setting the file name should succeed";
+ok $cache->open, "... and opening the file should succeed";
+ok $backend->is_open, "... causing the backend to report an open status";
+ok $cache->close, "... which means that closing the file should also succeed";
+ok ! $backend->is_open, "... causing the backend to report a closed status";
+ok $cache->lock( block => 1 ), "Locking the cache (in blocking mode) should succeed immediately";
+ok $cache->lock( block => 1 ), "... and locking it a second time should also succeed";
+ok $backend->is_locked == 1, "... causing the backend to report a locked status";
+ok $cache->unlock, "... which means that unlocking it should also succeed";
+ok $backend->is_locked == 0, "... causing the backend to report an unlocked status";
+ok $cache->unlock, "Unlocking an unlocked cache should succeed.";
 
 # Turn off access permissions
 SKIP: {
@@ -103,9 +103,9 @@ EOF
     }
 
     # Confirm that the file can't be opened
-    ok !defined $cache->open, "Can't open file";
-    ok $cache->lock, "Can still lock file, though";
-    ok $cache->unlock, "Can unlock as well";
+    ok !defined $cache->open, "Opening a file should fail if we have no permission";
+    ok $cache->lock, "... but it can still be locked";
+    ok $cache->unlock, "... and, of course, unlocked";
 }
 
 # Clean up

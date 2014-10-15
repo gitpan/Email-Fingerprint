@@ -16,11 +16,11 @@ Email::Fingerprint::Cache::AnyDBM - AnyDBM backend for Email::Fingerprint::Cache
 
 =head1 VERSION
 
-Version 0.01
+Version 0.48
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.48';
 
 =head1 SYNOPSIS
 

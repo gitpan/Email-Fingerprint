@@ -4,7 +4,6 @@ META.yml
 Makefile.PL
 README
 bin/eliminate-dups
-build_lib/Test/Stdout.pm
 examples/fpdump
 lib/Email/Fingerprint.pm
 lib/Email/Fingerprint/App/EliminateDups.pm

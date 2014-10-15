@@ -36,6 +36,5 @@ build_requires:
   File::Slurp: 0.01
   Test::Exception: 0.07
   Test::More: 0
-  Test::Stdout: 0
   Test::Warn: 0.09
 x_installdirs: site
